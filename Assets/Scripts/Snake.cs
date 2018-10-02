@@ -24,8 +24,9 @@ public class Snake : MonoBehaviour {
 		Destroy (this.gameObject);
 	}
 
-	void OnTriggerEnter(Collider other)
+ void OnTriggerEnter(Collider other)
 	{
+		
 		if(hit != null)
 		{
 			hit(other.tag);
@@ -33,6 +34,7 @@ public class Snake : MonoBehaviour {
 		if(other.tag == "Food")
 		{
 			Destroy(other.gameObject);
+
 		}
 	}
 

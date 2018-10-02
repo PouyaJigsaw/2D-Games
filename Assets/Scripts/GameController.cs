@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
@@ -16,6 +18,7 @@ public class GameController : MonoBehaviour {
 	public Snake tail;
 	public Vector2 nextPos;
 	public int NESW;
+	public Text scoreText;
 
 
 	// Use this for initialization
@@ -42,6 +45,7 @@ public class GameController : MonoBehaviour {
 
 	void TimeInvoke () {
 		Movement ();
+		StartCoroutine (checkVisible ());
 
 		if (currentSize >= maxSize) {
 			TailFunction ();
@@ -144,11 +148,64 @@ public class GameController : MonoBehaviour {
 	void hit(string whatwasSent)
 	{
 		if (whatwasSent == "Food") {
-		
+			
 			FoodFunction ();
 			maxSize++;
 			score++;
+			scoreText.text = score.ToString ();
+			int temp = PlayerPrefs.GetInt ("HighScore");
+			if (score > temp) {
+
+				Debug.Log ("It should refresh");
+				PlayerPrefs.SetInt ("HighScore", score);
+			}
+		
 		}
+
+		if (whatwasSent == "Snake") {
+		
+			CancelInvoke ("TimeInvoke");
+			Exit ();
+		}
+	}
+
+	public void Exit()
+	{
+		SceneManager.LoadScene (0);
+	
+	}
+
+
+	public void Wrap()
+	{
+		if (NESW == 0) {
+			head.transform.position = new Vector2(head.transform.position.x, -(head.transform.position.y - 1));
+		}
+		else if (NESW == 1) {
+			head.transform.position = new Vector2(-(head.transform.position.x - 1), head.transform.position.y);
+		}
+		else if (NESW == 2) {
+			head.transform.position = new Vector2(head.transform.position.x, -(head.transform.position.y + 1));
+		}
+		else if (NESW == 3) {
+			head.transform.position = new Vector2(-(head.transform.position.x + 1), head.transform.position.y);
+		}
+	
+	
+	
+	}
+
+	
+	IEnumerator checkVisible ()
+	{
+		
+		yield return new WaitForEndOfFrame ();
+		if (head.GetComponent<Renderer> ().isVisible == false) {
+						
+			Wrap ();
+							
+							}
+
 	}
 
 
